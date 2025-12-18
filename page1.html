@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code kurdsh</title>
+
+<style>
+
+    body{
+        background:#ededed ;
+        font-family: sans-serif;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+
+    /* قاب وەکو پلیت + QR */
+    .plate{
+        width: 300px;
+        height: 300px;
+        background: white;
+        border: 4px solid #111;
+        border-radius: 16px;
+
+        box-shadow:
+            0px 15px 22px rgba(0,0,0,0.25),
+            inset 0px 0px 15px rgba(0,0,0,0.06);
+
+        position: relative;
+    }
+
+    /* blocks of QR frame */
+    .block{
+        width: 45px;
+        height: 45px;
+        background: #111;
+        position: absolute;
+        border-radius: 6px;
+    }
+
+    .b1{ top:12px; left:12px; }
+    .b2{ top:12px; right:12px; }
+    .b3{ bottom:12px; left:12px; }
+    .b4{ bottom:12px; right:12px; }
+
+    /* ناوەڕاست — تاکە وێنە */
+    .inner{
+        width: 190px;
+        height: 190px;
+        border-radius: 10px;
+        margin: 55px auto;
+        background:#f7f7f7;
+        border: 2px solid #ccc;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        box-shadow: inset 0px 0px 10px rgba(0,0,0,0.10);
+    }
+
+    .inner img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+
+    }
+    
+     #imge1:hover{
+        transform: scaleX(1.1);
+        transition: 2s;
+     }
+     #button{
+        border: outset 0px;
+        
+        background-color: black;
+        width: 100px;
+        height: 50px;
+        color: white;
+        font-weight: bold;
+        font-size: 15px;
+        box-shadow: 0px 4px 10px black;
+        text-align: center;
+         text-decoration: none;
+         padding: 3px;
+
+     }
+     
+</style>
+</head>
+<body>
+
+    <div class="plate">
+        <div class="block b1"></div>
+        <div class="block b2"></div>
+        <div class="block b3"></div>
+        <div class="block b4"></div>
+    
+        <div class="inner">
+          <a >  <img src="image.png" alt="" id="imge1"></a>
+        </div>
+    </div>
+  <br><br><br><br><br><br><br><br><br><br>
+    <a id="button" href="pag2.html" onmouseover="this.style.backgroundColor='white';this.style.color='black'";  onmouseout="this.style.backgroundColor='black';this.style.color='white'";>
+     <p id="p1" style="text-decoration: none;">
+                فۆڵدەری زانیاری
+
+     </p>
+    </a>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+<meta charset="UTF-8">
+<title>QR Code kurdsh</title>
+
+<style>
+/* --------- GLOBAL --------- */
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #fdfbfb, #ebedee);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --------- SIDEBAR --------- */
+.sidebar {
+    width: 330px;
+    background: #ffffffcc;
+    backdrop-filter: blur(7px);
+    padding: 30px;
+    box-shadow: 6px 0 25px rgba(0,0,0,0.08);
+    border-right: 1px solid #f0f0f0;
+    overflow-y: auto;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar h1 {
+    font-size: 2rem;
+    color: #ef6c00;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* --------- MENU LINKS --------- */
+.menu-link {
+    display: block;
+    text-decoration: none;
+    font-weight: 700;
+    color: #5d4037;
+    background: #fff3e6;
+    padding: 14px 18px;
+    margin: 7px 0;
+    border-radius: 14px;
+    text-align: center;
+    transition: .25s ease;
+    border: 1px solid #ffd4aa;
+}
+
+.menu-link:hover {
+    background: #ef6c00;
+    color: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+
+/* --------- INPUTS --------- */
+label {
+    font-weight: bold;
+    color: #333;
+    margin-top: 18px;
+    display: block;
+}
+
+select, input, button {
+    width: 100%;
+    padding: 13px;
+    font-size: 15px;
+    margin-top: 6px;
+    border-radius: 12px;
+    border: 2px solid #ef6c00;
+    outline: none;
+    background: #ffffff;
+}
+
+/* Better-looking color box */
+input[type="color"] {
+    height: 55px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+/* --------- BUTTONS --------- */
+button {
+    background: #ef6c00;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: .3s;
+    border: none;
+    border-radius: 12px;
+}
+
+button:hover {
+    background: #ff8d00;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+}
+
+/* --------- QR AREA --------- */
+.qr-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#qrcode {
+    background: white;
+    padding: 26px;
+    border-radius: 30px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+    width: 280px;
+    height: 280px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#qrText {
+    margin-top: 25px;
+    padding: 10px 15px;
+    font-weight: bold;
+    color: #444;
+    text-align: center;
+    width: 85%;
+    background: #ffffffdd;
+    border-radius: 12px;
+    border: 1px solid #ffd9b3;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    word-break: break-all;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h1>Menu</h1>
+
+  <a href="page3.html" class="menu-link">پەیجی سەرەکی</a>
+  <a href="page2.html" class="menu-link">فێرکاری</a>
+
+  <label for="type">جۆری پەیوەندی</label>
+  <select id="type" onchange="toggleWiFiDetails()">
+    <option value="Email">ئیمەیڵ</option>
+    <option value="Phone">تەلەفون</option>
+    <option value="Facebook">فەیسبووک</option>
+    <option value="Snapchat">سناپچات</option>
+    <option value="Telegram">تێلیگرام</option>
+    <option value="WhatsApp">واتسئاپ</option>
+  </select>
+
+  <div id="wifiDetails" style="display:none;">
+    <label>SSID</label>
+    <input type="text" id="ssid">
+    <label>Password</label>
+    <input type="text" id="password">
+    <label>Encryption</label>
+    <select id="encryption">
+      <option value="WPA">WPA/WPA2</option>
+      <option value="WEP">WEP</option>
+      <option value="nopass">بێ وشە</option>
+    </select>
+  </div>
+
+  <label>داتای پەیوەندی</label>
+  <input type="text" id="inputData" placeholder="Enter data">
+
+  <label>ڕەنگی QR</label>
+  <input type="color" id="color" value="#ef6c00">
+
+  <hr style="margin:20px 0; border:1px solid #ef6c00">
+
+  <h3 style="text-align:center; color:#ef6c00;">شێوەی QR</h3>
+
+  <label>جۆری خانە</label>
+  <select id="dotStyle">
+    <option value="square">A</option>
+    <option value="dots">B</option>
+    <option value="rounded">C</option>
+    <option value="classy">D</option>
+    <option value="classy-rounded">E</option>
+    <option value="extra-rounded">F</option>
+  </select>
+
+  <label>جۆری گۆشە</label>
+  <select id="cornerStyle">
+    <option value="square">A</option>
+    <option value="dot">B</option>
+    <option value="rounded">C</option>
+  </select>
+
+  <h3 style="text-align:center; color:#ef6c00;">لۆگۆ</h3>
+  <label>بارکردنی لۆگۆ</label>
+  <input type="file" id="logoUpload" accept="image/*">
+
+  <button onclick="generateQRCode()">QR دروست بکە</button>
+  <button onclick="clearInput()">سڕینەوە</button>
+  <button onclick="downloadQRCode()">داونلود</button>
+</div>
+
+
+
+<div class="qr-area">
+  <div id="qrcode"></div>
+  <div id="qrText"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+
+<script>
+let qrStyled;
+let logoImage = null;
+
+document.getElementById("logoUpload").addEventListener("change", function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => logoImage = e.target.result;
+  reader.readAsDataURL(file);
+});
+
+function toggleWiFiDetails() {
+  const type = document.getElementById('type').value;
+  document.getElementById('wifiDetails').style.display = type === "WiFi" ? "block" : "none";
+  document.getElementById('inputData').style.display = type === "WiFi" ? "none" : "block";
+}
+
+function generateQRCode() {
+  const type = document.getElementById("type").value;
+  let text = "";
+  const color = document.getElementById("color").value;
+
+  if (type === "WiFi") {
+    const ssid = document.getElementById("ssid").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const enc = document.getElementById("encryption").value;
+    if (!ssid) return alert("ناوی وایفای بنووسە");
+    text = `WIFI:T:${enc};S:${ssid};P:${pass};;`;
+  } else {
+    const data = document.getElementById("inputData").value.trim();
+    if (!data) return alert("داتا بنووسە.");
+    switch (type) {
+      case "Email": text = `mailto:${data}`; break;
+      case "Phone": text = `tel:${data}`; break;
+      case "Facebook": text = data; break;
+      case "Snapchat": text = `https://snapchat.com/add/${data}`; break;
+      case "Telegram": text = `https://t.me/${data}`; break;
+      case "WhatsApp": text = `https://wa.me/${data}`; break;
+      default: text = data;
+    }
+  }
+
+  const dotStyle = document.getElementById("dotStyle").value;
+  const cornerStyle = document.getElementById("cornerStyle").value;
+
+  qrStyled = new QRCodeStyling({
+    width: 280,
+    height: 280,
+    data: text,
+    dotsOptions: { color, type: dotStyle },
+    cornersSquareOptions: { color, type: cornerStyle },
+    backgroundOptions: { color: "#ffffff" },
+    image: logoImage,
+    imageOptions: {
+      margin: 5,
+      imageSize: 0.4
+    }
+  });
+
+  document.getElementById("qrcode").innerHTML = "";
+  qrStyled.append(document.getElementById("qrcode"));
+  document.getElementById("qrText").textContent = text;
+}
+
+function clearInput() {
+  document.getElementById("inputData").value = "";
+  document.getElementById("ssid").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("qrcode").innerHTML = "";
+  document.getElementById("qrText").textContent = "";
+}
+
+function downloadQRCode() {
+  if (!qrStyled) return alert("QR دروست نەکراوە.");
+  qrStyled.download({ name: "qrcode", extension: "png" });
+}
+</script>
+
+</body>
+</html>

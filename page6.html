@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+  <meta charset="UTF-8">
+<title>QR Code kurdsh</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fefefe, #fff8f0);
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .sidebar {
+      flex: 1 1 300px;
+      max-width: 300px;
+      background: #ffffffdd;
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      box-shadow: 4px 0 20px rgba(239,108,0,.25);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .sidebar h2 {
+      color: #ef6c00;
+      font-size: 1.6rem;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .sidebar a {
+      display: block;
+      text-decoration: none;
+      padding: 12px;
+      border-radius: 10px;
+      color: #5d4037;
+      font-weight: bold;
+      background: #ffe9d6;
+      text-align: center;
+      transition: 0.2s ease;
+    }
+
+    .sidebar a:hover { background: #ef6c00; color: #fff; }
+
+    .qr-form {
+      background: #fff;
+      border-radius: 20px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(239,108,0,0.25);
+    }
+
+    .qr-form input, .qr-form select, .qr-form button {
+      font-size: 14px;
+    }
+
+    .qr-form input[type="text"], .qr-form input[type="color"], .qr-form select {
+      padding: 8px;
+      border-radius: 8px;
+      border: 2px solid #ef6c00;
+      width: 100%;
+    }
+
+    .qr-form button {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #ef6c00;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .qr-form button:hover { background: #d87c00; }
+
+    .main-area {
+      flex: 2 1 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      min-width: 320px;
+    }
+
+    .main-area #qrcode {
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(239,108,0,0.3);
+      max-width: 90vw;
+      max-height: 90vw;
+    }
+
+    .main-area h1 {
+      color: #d89518;
+      text-shadow: 1px 1px 2px #a36100;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    @media(max-width:768px){
+      .container { flex-direction: column; }
+      .sidebar, .main-area { max-width: 100%; flex: 1 1 auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="sidebar">
+    <h2> MENU</h2>
+    <a href="page3.html">پەیجی سەرەکی</a>
+    <a href="page2.html">فێرکاری</a>
+
+    <div class="qr-form">
+      <label>ناونیشانی Google Maps</label>
+      <input type="text" id="address" placeholder="ناونیشانت بنوسە...">
+
+      <label>ڕەنگی QR Code</label>
+      <input type="color" id="qrColor" value="#000000">
+
+      <label>جۆری خانە دیاریبکە</label>
+      <select id="dotStyle">
+        <option value="square">خانەی A</option>
+        <option value="dots">خانەی B</option>
+        <option value="rounded">خانەی C</option>
+        <option value="classy">خانەی D</option>
+        <option value="classy-rounded">خانەی E</option>
+        <option value="extra-rounded">خانەی F</option>
+      </select>
+
+      <label>جۆری گۆشەکان دیاریبکە</label>
+      <select id="cornerStyle">
+        <option value="square">گۆشەی A</option>
+        <option value="dot">گۆشەی B</option>
+        <option value="rounded">گۆشەی C</option>
+      </select>
+
+      <label>لۆگۆ باربکە</label>
+      <input type="file" id="logoUpload" accept="image/*">
+
+      <button onclick="generateQRCode()">دروستکردنی QR Code</button>
+      <button id="downloadBtn" style="display:none;">دانلودکردنی QR Code</button>
+      <button onclick="resetForm()" style="background:#d67e19;">ڕەشکردنەوە</button>
+    </div>
+  </div>
+
+  <div class="main-area">
+    <h1>QR Code Google Map</h1>
+    <div id="qrcode"></div>
+  </div>
+
+</div>
+
+<script>
+  let qrStyled;
+  let logoImage = null;
+
+  document.getElementById("logoUpload").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => { logoImage = e.target.result; };
+    reader.readAsDataURL(file);
+  });
+
+  function generateQRCode() {
+    const address = document.getElementById("address").value.trim();
+    if (!address) { alert("تکایە ناونیشانت بنوسە!"); return; }
+
+    const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(address);
+    const color = document.getElementById("qrColor").value;
+    const dotType = document.getElementById("dotStyle").value;
+    const cornerType = document.getElementById("cornerStyle").value;
+
+    qrStyled = new QRCodeStyling({
+      width: 260,
+      height: 260,
+      data: url,
+      dotsOptions: { color: color, type: dotType },
+      cornersSquareOptions: { type: cornerType, color: color },
+      backgroundOptions: { color: "#ffffff" },
+      image: logoImage,
+      imageOptions: { margin: 6, imageSize: 0.35, crossOrigin: "anonymous" }
+    });
+
+    document.getElementById("qrcode").innerHTML = "";
+    qrStyled.append(document.getElementById("qrcode"));
+    document.getElementById("downloadBtn").style.display = "block";
+  }
+
+  function resetForm() {
+    document.getElementById("address").value = "";
+    document.getElementById("qrColor").value = "#000000";
+    document.getElementById("dotStyle").value = "square";
+    document.getElementById("cornerStyle").value = "square";
+    document.getElementById("logoUpload").value = "";
+    logoImage = null;
+    document.getElementById("qrcode").innerHTML = "";
+    document.getElementById("downloadBtn").style.display = "none";
+  }
+
+  document.getElementById("downloadBtn").onclick = () => {
+    qrStyled.download({ name: "googlemap_qrcode", extension: "png" });
+  };
+</script>
+
+</body>
+</html>
