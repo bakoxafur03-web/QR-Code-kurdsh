@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>QR Code kurdsh</title>
+    <title>QR Code kurdsh</title>
+
     <style>
         body {
-            font-family: sans-serif;
-            background: #f2f2f2;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: linear-gradient(135deg, #ff7e00, #ffb347, #ffcc33);
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,67 +19,79 @@
 
         .container {
             display: flex;
-            gap: 40px;
+            gap: 30px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .box {
-            background: white;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 280px;
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
         .box:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
 
         .box h2 {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #333;
+            font-size: 22px;
+        }
+
+        .box p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
         }
 
         .box a {
             display: inline-block;
             padding: 12px 25px;
-            margin-top: 15px;
-            background-color: #e5b634;
-            color: white;
-            border-radius: 8px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #ff8c00, #ffa500);
+            color: #fff;
+            border-radius: 30px;
             text-decoration: none;
             font-weight: bold;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .box a:hover {
-            background-color: #ffae00;
+            background: linear-gradient(135deg, #ff6a00, #ff9900);
+            transform: scale(1.05);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <!-- Container 1: Social QR Code -->
+
         <div class="box">
             <h2>QR Code</h2>
             <p>دروستکردنی بۆ ئیمەیڵ، تەلەفۆن، فەیسبووک، واتسئاپ، سناپچات و تیلیگرام.</p>
-            <a href="page4.html"> کلیک لەیرە بکە</a>
+            <a href="page4.html">کلیک لێرە بکە</a>
         </div>
 
-        <!-- Container 2: Wi-Fi QR Code -->
         <div class="box">
-            <h2>QR Code  WiFi</h2>
-            <p>دروستکردنی ئینتەرنێت .</p>
-            <a href="page5.html">  کلیک لەیرە بکە</a>
+            <h2>QR Code WiFi</h2>
+            <p>دروستکردنی ئینتەرنێت.</p>
+            <a href="page5.html">کلیک لێرە بکە</a>
         </div>
-          <!-- Container 2: Wi-Fi QR Code -->
+
         <div class="box">
-            <h2>QR Code  Google Map</h2>
-            <p>گۆگڵ ماپ  .</p>
-            <a href="page6.html">  کلیک لەیرە بکە</a>
+            <h2>QR Code Google Map</h2>
+            <p>گۆگڵ ماپ.</p>
+            <a href="page6.html">کلیک لێرە بکە</a>
         </div>
+
     </div>
 </body>
 </html>
