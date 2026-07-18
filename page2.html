@@ -1,1 +1,690 @@
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code کوردی — وایفای</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
+<!-- QR Code Styling -->
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --accent:#ef6c00;--accent2:#ffb74d;
+  --ink:#2b1a12;--muted:#8d6e63;
+  --bg1:#fff8f2;--bg2:#ffe9d6;
+  --card:#ffffff;
+  --line:rgba(239,108,0,.14);
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  color:var(--ink);
+  background:
+    radial-gradient(900px 500px at 100% -10%, rgba(239,108,0,.10), transparent 60%),
+    radial-gradient(700px 500px at -10% 100%, rgba(255,183,77,.18), transparent 60%),
+    var(--bg1);
+  display:flex;align-items:stretch;
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:340px;flex-shrink:0;
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(10px);
+  border-right:1px solid var(--line);
+  box-shadow:6px 0 30px rgba(120,70,10,.08);
+  padding:26px 20px 40px;
+  overflow-y:auto;
+  display:flex;flex-direction:column;gap:8px;
+}
+.sidebar::-webkit-scrollbar{width:5px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(239,108,0,.25);border-radius:6px;}
+
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.brand-mark{
+  width:44px;height:44px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 18px rgba(239,108,0,.35);
+  position:relative;
+}
+.brand-mark svg{width:24px;height:24px;}
+.brand h1{font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:800;color:var(--ink);letter-spacing:.01em;}
+.brand p{font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.04em;margin-top:1px;}
+
+.back-link{
+  display:flex;align-items:center;gap:8px;justify-content:center;
+  text-decoration:none;color:var(--muted);font-size:13px;font-weight:600;
+  padding:10px 14px;border-radius:12px;border:1px solid var(--line);
+  background:#fff;transition:all .2s;margin:8px 0 4px;
+}
+.back-link:hover{color:var(--accent);border-color:rgba(239,108,0,.4);box-shadow:0 4px 14px rgba(239,108,0,.15);}
+
+.sec-label{
+  font-family:'Poppins',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:.14em;
+  color:var(--accent);text-transform:uppercase;
+  padding:14px 0 6px;border-top:1px solid var(--line);margin-top:8px;
+  display:flex;align-items:center;gap:6px;
+}
+
+label.fl{font-size:12.5px;font-weight:600;color:var(--muted);margin-top:10px;display:block;}
+
+input[type=text],input[type=password],select,input[type=file]{
+  width:100%;padding:11px 14px;
+  background:#fffaf5;
+  border:1.5px solid var(--line);
+  border-radius:12px;color:var(--ink);font-size:14px;
+  outline:none;margin-top:5px;
+  font-family:'Inter',sans-serif;
+  transition:border-color .2s, box-shadow .2s;
+}
+input[type=text]:focus,input[type=password]:focus,select:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px rgba(239,108,0,.12);
+}
+select option{background:#fff;}
+
+input[type=color]{
+  width:100%;height:46px;padding:4px 6px;
+  background:#fffaf5;border:1.5px solid var(--line);
+  border-radius:12px;cursor:pointer;margin-top:5px;
+}
+
+.btn{
+  width:100%;padding:12px;border:none;border-radius:13px;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all .22s;margin-top:9px;
+  font-family:'Poppins',sans-serif;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;box-shadow:0 8px 20px rgba(239,108,0,.35);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(239,108,0,.45);}
+.btn-danger{background:#fff0e6;color:#bf360c;border:1.5px solid rgba(191,54,12,.25);}
+.btn-danger:hover{background:#ffe1cc;}
+.btn-outline{background:#fff;color:var(--accent);border:1.5px solid rgba(239,108,0,.35);}
+.btn-outline:hover{background:#fff3e6;}
+
+/* ---------- STYLE PICKERS ---------- */
+.style-section{
+  background:#fffaf5;
+  border:1px solid var(--line);
+  border-radius:16px;padding:14px;margin-top:8px;
+}
+.style-title{
+  font-family:'Poppins',sans-serif;
+  font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px;text-align:center;
+}
+.style-grid,.corner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.style-cell,.corner-cell{
+  border-radius:11px;padding:6px 4px 5px;
+  background:#fff;border:2px solid transparent;
+  cursor:pointer;transition:all .18s;text-align:center;
+}
+.style-cell:hover,.corner-cell:hover{border-color:rgba(239,108,0,.35);background:#fff3e6;}
+.style-cell.active,.corner-cell.active{border-color:var(--accent);background:#ffe9d6;}
+.style-cell svg,.corner-cell svg{width:50px;height:50px;display:block;margin:0 auto 3px;border-radius:8px;}
+.style-cell span,.corner-cell span{font-size:9.5px;color:var(--muted);font-weight:600;}
+.style-cell.active span,.corner-cell.active span{color:var(--accent);}
+
+/* ---------- MAIN ---------- */
+.main-area{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;padding:44px 34px;gap:24px;
+  overflow-y:auto;
+}
+
+.hero{text-align:center;max-width:520px;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11.5px;font-weight:700;letter-spacing:.14em;
+  color:var(--accent);text-transform:uppercase;
+  background:rgba(239,108,0,.08);padding:6px 14px;border-radius:999px;
+  margin-bottom:12px;
+}
+.hero h1{font-family:'Poppins',sans-serif;font-size:2rem;font-weight:800;color:var(--ink);}
+.hero p{color:var(--muted);font-size:14.5px;margin-top:8px;line-height:1.6;}
+
+.content-row{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center;width:100%;}
+
+.qr-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:28px;padding:32px;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+  box-shadow:0 26px 60px rgba(120,70,10,.14);
+  position:relative;overflow:hidden;min-width:320px;
+}
+.qr-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));
+  background-size:200% auto;animation:shimmer 3s linear infinite;
+}
+@keyframes shimmer{to{background-position:200% center;}}
+
+#qrcode{
+  background:#fff;padding:16px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 28px rgba(120,70,10,.12);
+  min-height:260px;min-width:260px;
+}
+.qr-placeholder{display:flex;flex-direction:column;align-items:center;gap:10px;color:rgba(239,108,0,.35);}
+.qr-placeholder p{font-size:13px;font-weight:600;color:var(--muted);}
+
+#errorMsg{color:#d50000;font-weight:600;font-size:12.5px;min-height:16px;text-align:center;}
+
+.qr-actions{display:flex;gap:10px;}
+.qr-actions .btn{margin-top:0;width:auto;padding:11px 22px;}
+
+.wifi-list-container{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;padding:24px;
+  width:300px;box-shadow:0 20px 50px rgba(120,70,10,.12);
+}
+.wifi-list-container h2{
+  font-family:'Poppins',sans-serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+#wifiList{list-style:none;display:flex;flex-direction:column;gap:8px;}
+#wifiList li{
+  padding:12px 14px;background:#fff8f2;border:1px solid var(--line);
+  border-radius:13px;cursor:pointer;transition:.2s ease;
+  font-size:13.5px;font-weight:600;color:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+}
+#wifiList li:hover{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;transform:translateX(-2px);}
+#wifiList li .tag{font-size:10.5px;font-weight:700;opacity:.65;}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 8.5C8 3 16 3 22 8.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M5.5 12.5C9.5 9 14.5 9 18.5 12.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M9 16.3C10.8 14.8 13.2 14.8 15 16.3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="12" cy="19.5" r="1.4" fill="#fff"/>
+      </svg>
+    </div>
+    <div>
+      <h1>وایفای QR</h1>
+      <p>دروستکردنی کۆدی وایفای بە سلیقە</p>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-link">← پەیجی سەرەکی</a>
+
+  <div class="sec-label">📶 زانیاری وایفای</div>
+
+  <label class="fl">ناوی وایفای (SSID)</label>
+  <input id="ssid" type="text" placeholder="ناوی تۆڕەکە...">
+
+  <label class="fl">وشەی نهێنی</label>
+  <input id="password" type="password" placeholder="••••••••">
+
+  <label class="fl">جۆری پاراستن</label>
+  <select id="encryption">
+    <option value="WPA">WPA/WPA2</option>
+    <option value="WEP">WEP</option>
+    <option value="nopass">بێ پاراستن</option>
+  </select>
+
+  <div class="sec-label">🎨 دیزاینی QR</div>
+
+  <label class="fl">ڕەنگی QR Code</label>
+  <input type="color" id="qrColor" value="#ef6c00" onchange="updateAllPreviews()">
+
+  <label class="fl">لۆگۆ باربکە</label>
+  <input type="file" id="logoUpload" accept="image/*">
+
+  <div class="style-section">
+    <div class="style-title">⬛ جۆری خانەکان (Dots)</div>
+    <div class="style-grid" id="dotGrid"></div>
+  </div>
+
+  <div class="style-section">
+    <div class="style-title">🔲 گۆشەی دەرەوە (Outer)</div>
+    <div class="corner-grid" id="outerGrid"></div>
+  </div>
+
+  <div class="style-section">
+    <div class="style-title">◾ گۆشەی ناوەوە (Inner)</div>
+    <div class="corner-grid" id="innerGrid"></div>
+  </div>
+
+  <!-- <div class="style-section">
+    <div class="style-title">🔶 بەڤڵ (Bevel)</div>
+    <div class="corner-grid" id="bevelGrid"></div>
+  </div> -->
+
+  <p id="errorMsg"></p>
+
+  <button id="generateBtn" class="btn btn-primary">✦ دروستکردنی QR</button>
+  <button id="clearBtn" class="btn btn-danger">🗑 ڕەشکردنەوە</button>
+  <button id="downloadBtn" class="btn btn-outline" style="display:none;">⬇ دانلودکردنی QR</button>
+</div>
+
+<!-- MAIN -->
+<div class="main-area">
+
+  <div class="hero">
+    <div class="hero-eyebrow">✦ QR جێنیرەیتەر</div>
+    <h1>کۆدی وایفای بە شێوازی خۆت</h1>
+    <p>ناو و وشەی نهێنی وایفاکەت بنووسە، ڕەنگ و شێوازی دڵخوازت هەڵبژێرە، و کۆدێکی تایبەت بە خۆت دروست بکە.</p>
+  </div>
+
+  <div class="content-row">
+    <div class="qr-card">
+      <div id="qrcode">
+        <div class="qr-placeholder">
+          <svg width="72" height="72" viewBox="0 0 80 80" fill="none">
+            <rect x="8" y="8" width="24" height="24" rx="4" stroke="currentColor" stroke-width="3"/>
+            <rect x="14" y="14" width="12" height="12" rx="2" fill="currentColor"/>
+            <rect x="48" y="8" width="24" height="24" rx="4" stroke="currentColor" stroke-width="3"/>
+            <rect x="54" y="14" width="12" height="12" rx="2" fill="currentColor"/>
+            <rect x="8" y="48" width="24" height="24" rx="4" stroke="currentColor" stroke-width="3"/>
+            <rect x="14" y="54" width="12" height="12" rx="2" fill="currentColor"/>
+            <line x1="48" y1="48" x2="72" y2="72" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="48" y1="72" x2="72" y2="48" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <p>هێشتا QR دروست نەکراوە</p>
+        </div>
+      </div>
+      <div class="qr-actions">
+        <button class="btn btn-primary" onclick="generateWiFiQR()">✦ دروستکردن</button>
+        <button class="btn btn-outline" onclick="downloadQR()">⬇ دانلود</button>
+      </div>
+    </div>
+
+    <div class="wifi-list-container">
+      <h2>📡 لیستی وایفای</h2>
+      <ul id="wifiList"></ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= STATE ================= */
+let logoImage = null;
+let qrStyled = null;
+let customCanvas = null;
+let selectedDot='square', selectedOuter='square', selectedInner='dot', selectedBevel=null;
+
+const ssidInput = document.getElementById('ssid');
+const passwordInput = document.getElementById('password');
+const encryptionSelect = document.getElementById('encryption');
+const colorInput = document.getElementById('qrColor');
+const qrcodeContainer = document.getElementById('qrcode');
+const errorMsg = document.getElementById('errorMsg');
+const downloadBtn = document.getElementById('downloadBtn');
+const wifiList = document.getElementById('wifiList');
+
+const wifiNetworks = [
+  { ssid: "HomeWiFi", password: "12345678", encryption: "WPA" },
+  { ssid: "OfficeNet", password: "office2025", encryption: "WPA" },
+  { ssid: "GuestNet", password: "", encryption: "nopass" }
+];
+
+/* ================= STYLE DEFINITIONS ================= */
+const dotStyles=[
+  {id:'square',label:'Square'},{id:'dots',label:'Dots'},
+  {id:'rounded',label:'Rounded'},{id:'classy',label:'Classy'},
+  {id:'classy-rounded',label:'Classy R.'},{id:'extra-rounded',label:'Extra R.'},
+];
+const outerStyles=[
+  {id:'square',label:'Square'},{id:'extra-rounded',label:'Rounded'},{id:'dot',label:'Dot'},
+];
+const innerStyles=[
+  {id:'square',label:'Square'},{id:'rounded',label:'Rounded'},{id:'dot',label:'Dot'},
+];
+const bevelStyles=[
+  {id:'bevel1',label:'Bevel 1'},{id:'bevel2',label:'Bevel 2'},
+  {id:'bevel3',label:'Bevel 3'},{id:'bevel4',label:'Bevel 4'},
+  {id:'bevel5',label:'Bevel 5'},{id:'bevel6',label:'Bevel 6'},
+  {id:'bevel7',label:'Bevel 7'},{id:'bevel8',label:'Bevel 8'},
+  {id:'bevel9',label:'Bevel 9'},{id:'bevel10',label:'Bevel 10'},
+  {id:'bevel11',label:'Bevel 11'},{id:'bevel12',label:'Bevel 12'},
+];
+
+function getColor(){return colorInput.value||'#ef6c00';}
+
+/* ================= PREVIEW SVG BUILDERS ================= */
+function dotSVG(type,color){
+  const s=52,g=4,cell=8,cols=5; let sh='';
+  for(let r=0;r<cols;r++) for(let c=0;c<cols;c++){
+    const x=g+c*(cell+2),y=g+r*(cell+2),cx=x+cell/2,cy=y+cell/2;
+    if(type==='dots') sh+=`<circle cx="${cx}" cy="${cy}" r="${cell/2*.9}" fill="${color}"/>`;
+    else if(type==='rounded') sh+=`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="${cell*.4}" fill="${color}"/>`;
+    else if(type==='classy') sh+=`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="${cell*.15}" fill="${color}"/>`;
+    else if(type==='classy-rounded') sh+=`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="${cell*.3}" fill="${color}"/>`;
+    else if(type==='extra-rounded') sh+=`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="${cell*.48}" fill="${color}"/>`;
+    else sh+=`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${color}"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}"><rect width="${s}" height="${s}" rx="6" fill="#fff"/>${sh}</svg>`;
+}
+function outerSVG(type,color){
+  const s=52,b=8,t=3; let sh='';
+  if(type==='dot') sh=`<circle cx="${s/2}" cy="${s/2}" r="${s/2-b}" fill="none" stroke="${color}" stroke-width="${t+1}"/>`;
+  else if(type==='extra-rounded') sh=`<rect x="${b}" y="${b}" width="${s-b*2}" height="${s-b*2}" rx="${(s-b*2)*.45}" fill="none" stroke="${color}" stroke-width="${t}"/>`;
+  else sh=`<rect x="${b}" y="${b}" width="${s-b*2}" height="${s-b*2}" rx="3" fill="none" stroke="${color}" stroke-width="${t}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}"><rect width="${s}" height="${s}" rx="6" fill="#fff"/>${sh}</svg>`;
+}
+function innerSVG(type,color){
+  const s=52,pad=16,inner=s-pad*2; let sh='';
+  if(type==='dot') sh=`<circle cx="${s/2}" cy="${s/2}" r="${inner/2}" fill="${color}"/>`;
+  else if(type==='rounded') sh=`<rect x="${pad}" y="${pad}" width="${inner}" height="${inner}" rx="${inner*.4}" fill="${color}"/>`;
+  else sh=`<rect x="${pad}" y="${pad}" width="${inner}" height="${inner}" fill="${color}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}"><rect width="${s}" height="${s}" rx="6" fill="#fff"/>${sh}</svg>`;
+}
+function bevelSVG(type,color){
+  const s=52,b=4; let inner='';
+  switch(type){
+    case 'bevel1':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <polygon points="${b},${b} ${s-b},${b} ${b},${s-b}" fill="rgba(255,255,255,.55)"/>
+        <polygon points="${s-b},${b} ${s-b},${s-b} ${b},${s-b}" fill="rgba(0,0,0,.4)"/>`;
+      break;
+    case 'bevel2':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <rect x="${s*0.28}" y="${s*0.28}" width="${s*0.44}" height="${s*0.44}" fill="rgba(255,255,255,.85)" stroke="rgba(0,0,0,.45)" stroke-width="2"/>`;
+      break;
+    case 'bevel3':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <rect x="${s*0.16}" y="${s*0.16}" width="${s*0.68}" height="${s*0.68}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="${s*0.12}"/>
+        <rect x="${s*0.34}" y="${s*0.34}" width="${s*0.32}" height="${s*0.32}" fill="rgba(255,255,255,.85)"/>`;
+      break;
+    case 'bevel4':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <polygon points="${b},${b} ${s-b},${b} ${s/2},${s/2}" fill="rgba(255,255,255,.45)"/>
+        <polygon points="${b},${s-b} ${s-b},${s-b} ${s/2},${s/2}" fill="rgba(0,0,0,.25)"/>`;
+      break;
+    case 'bevel5':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <polygon points="${b},${b} ${s-b},${b} ${b},${s-b}" fill="rgba(0,0,0,.4)"/>
+        <polygon points="${s-b},${b} ${s-b},${s-b} ${b},${s-b}" fill="rgba(255,255,255,.55)"/>`;
+      break;
+    case 'bevel6':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>`;
+      break;
+    case 'bevel7':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <rect x="${s*0.14}" y="${s*0.14}" width="${s*0.72}" height="${s*0.72}" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="${s*0.1}"/>
+        <rect x="${s*0.32}" y="${s*0.32}" width="${s*0.36}" height="${s*0.36}" fill="rgba(0,0,0,.28)"/>`;
+      break;
+    case 'bevel8':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <polygon points="${s-b},${b} ${s-b},${s-b} ${s/2},${s/2}" fill="rgba(255,255,255,.45)"/>
+        <polygon points="${b},${b} ${b},${s-b} ${s/2},${s/2}" fill="rgba(0,0,0,.25)"/>`;
+      break;
+    case 'bevel9':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="rgba(255,255,255,.9)" stroke="${color}" stroke-width="1.5"/>
+        <rect x="${s*0.18}" y="${s*0.18}" width="${s*0.64}" height="${s*0.64}" fill="none" stroke="${color}" stroke-width="${s*0.14}"/>
+        <rect x="${s*0.36}" y="${s*0.36}" width="${s*0.28}" height="${s*0.28}" fill="#fff"/>`;
+      break;
+    case 'bevel10':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <rect x="${s*0.22}" y="${s*0.22}" width="${s*0.56}" height="${s*0.56}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="${s*0.08}"/>
+        <rect x="${s*0.34}" y="${s*0.34}" width="${s*0.32}" height="${s*0.32}" fill="rgba(255,255,255,.75)"/>`;
+      break;
+    case 'bevel11':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>
+        <polygon points="${s-b},${b} ${s-b},${s-b} ${b},${s-b}" fill="rgba(255,255,255,.4)"/>
+        <polygon points="${b},${b} ${s-b},${b} ${b},${s-b}" fill="rgba(0,0,0,.2)"/>`;
+      break;
+    case 'bevel12':
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="6" fill="rgba(255,255,255,.85)" stroke="${color}" stroke-width="1.2"/>
+        <rect x="${s*0.16}" y="${s*0.16}" width="${s*0.3}" height="${s*0.14}" fill="rgba(255,255,255,.6)"/>`;
+      break;
+    default:
+      inner=`<rect x="${b}" y="${b}" width="${s-2*b}" height="${s-2*b}" rx="4" fill="${color}"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}"><rect width="${s}" height="${s}" rx="6" fill="#fff"/>${inner}</svg>`;
+}
+
+/* ================= CANVAS BEVEL RENDERING (for the real QR) ================= */
+// function drawBevelModule(ctx,x,y,cell,type,color){
+//   ctx.fillStyle=color;
+//   ctx.fillRect(x,y,cell,cell);
+//   switch(type){
+//     case 'bevel1': case 'bevel4':
+//       ctx.fillStyle='rgba(255,255,255,.55)';
+//       ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+cell,y);ctx.lineTo(x,y+cell);ctx.closePath();ctx.fill();
+//       ctx.fillStyle='rgba(0,0,0,.35)';
+//       ctx.beginPath();ctx.moveTo(x+cell,y);ctx.lineTo(x+cell,y+cell);ctx.lineTo(x,y+cell);ctx.closePath();ctx.fill();
+//       break;
+//     case 'bevel5': case 'bevel8':
+//       ctx.fillStyle='rgba(0,0,0,.35)';
+//       ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+cell,y);ctx.lineTo(x,y+cell);ctx.closePath();ctx.fill();
+//       ctx.fillStyle='rgba(255,255,255,.55)';
+//       ctx.beginPath();ctx.moveTo(x+cell,y);ctx.lineTo(x+cell,y+cell);ctx.lineTo(x,y+cell);ctx.closePath();ctx.fill();
+//       break;
+//     case 'bevel11':
+//       ctx.fillStyle='rgba(0,0,0,.25)';
+//       ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+cell,y);ctx.lineTo(x,y+cell);ctx.closePath();ctx.fill();
+//       ctx.fillStyle='rgba(255,255,255,.4)';
+//       ctx.beginPath();ctx.moveTo(x+cell,y);ctx.lineTo(x+cell,y+cell);ctx.lineTo(x,y+cell);ctx.closePath();ctx.fill();
+//       break;
+//     case 'bevel2': case 'bevel9': case 'bevel12':{
+//       ctx.fillStyle='rgba(255,255,255,.65)';
+//       const p=cell*0.28,is=cell*0.44;
+//       ctx.fillRect(x+p,y+p,is,is);
+//       break;}
+//     case 'bevel3': case 'bevel7': case 'bevel10':{
+//       ctx.fillStyle='rgba(0,0,0,.28)';
+//       const p2=cell*0.22,is2=cell*0.56;
+//       ctx.fillRect(x+p2,y+p2,is2,is2);
+//       break;}
+//     case 'bevel6': default:
+//       break;
+//   }
+// }
+function drawFinderPattern(ctx,x0,y0,cell,color){
+  for(let i=0;i<7;i++)for(let j=0;j<7;j++){
+    const dark=(i===0||i===6||j===0||j===6)||(i>=2&&i<=4&&j>=2&&j<=4);
+    ctx.fillStyle=dark?color:'#ffffff';
+    ctx.fillRect(x0+j*cell,y0+i*cell,cell,cell);
+  }
+}
+function renderBevelQR(text,color,size,bevelType){
+  const qr=qrcode(0,'M');
+  qr.addData(text); qr.make();
+  const count=qr.getModuleCount();
+  const cell=Math.max(2,Math.floor(size/count));
+  const canvasSize=cell*count;
+  const canvas=document.createElement('canvas');
+  canvas.width=canvasSize; canvas.height=canvasSize;
+  canvas.style.width=size+'px'; canvas.style.height=size+'px';
+  canvas.style.display='block';
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,canvasSize,canvasSize);
+  const isFinderZone=(r,c)=> (r<7&&c<7)||(r<7&&c>=count-7)||(r>=count-7&&c<7);
+  for(let r=0;r<count;r++){
+    for(let c=0;c<count;c++){
+      if(isFinderZone(r,c))continue;
+      if(qr.isDark(r,c)) drawBevelModule(ctx,c*cell,r*cell,cell,bevelType,color);
+    }
+  }
+  drawFinderPattern(ctx,0,0,cell,color);
+  drawFinderPattern(ctx,(count-7)*cell,0,cell,color);
+  drawFinderPattern(ctx,0,(count-7)*cell,cell,color);
+  if(logoImage){
+    const img=new Image();
+    img.onload=()=>{
+      const logoSize=canvasSize*0.22;
+      const lx=(canvasSize-logoSize)/2, ly=(canvasSize-logoSize)/2;
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(lx-4,ly-4,logoSize+8,logoSize+8);
+      ctx.drawImage(img,lx,ly,logoSize,logoSize);
+    };
+    img.src=logoImage;
+  }
+  return canvas;
+}
+
+/* ================= GRID BUILDERS ================= */
+function buildDotGrid(){
+  const g=document.getElementById('dotGrid'); g.innerHTML='';
+  dotStyles.forEach(st=>{
+    const c=document.createElement('div');
+    c.className='style-cell'+(st.id===selectedDot?' active':'');
+    c.innerHTML=dotSVG(st.id,getColor())+`<span>${st.label}</span>`;
+    c.onclick=()=>{selectedDot=st.id;document.querySelectorAll('#dotGrid .style-cell').forEach(x=>x.classList.remove('active'));c.classList.add('active');};
+    g.appendChild(c);
+  });
+}
+function buildOuterGrid(){
+  const g=document.getElementById('outerGrid'); g.innerHTML='';
+  outerStyles.forEach(st=>{
+    const c=document.createElement('div');
+    c.className='corner-cell'+(st.id===selectedOuter?' active':'');
+    c.innerHTML=outerSVG(st.id,getColor())+`<span>${st.label}</span>`;
+    c.onclick=()=>{selectedOuter=st.id;document.querySelectorAll('#outerGrid .corner-cell').forEach(x=>x.classList.remove('active'));c.classList.add('active');};
+    g.appendChild(c);
+  });
+}
+function buildInnerGrid(){
+  const g=document.getElementById('innerGrid'); g.innerHTML='';
+  innerStyles.forEach(st=>{
+    const c=document.createElement('div');
+    c.className='corner-cell'+(st.id===selectedInner?' active':'');
+    c.innerHTML=innerSVG(st.id,getColor())+`<span>${st.label}</span>`;
+    c.onclick=()=>{selectedInner=st.id;document.querySelectorAll('#innerGrid .corner-cell').forEach(x=>x.classList.remove('active'));c.classList.add('active');};
+    g.appendChild(c);
+  });
+}
+function buildBevelGrid(){
+  const g=document.getElementById('bevelGrid'); g.innerHTML='';
+  bevelStyles.forEach(st=>{
+    const c=document.createElement('div');
+    c.className='corner-cell'+(st.id===selectedBevel?' active':'');
+    c.innerHTML=bevelSVG(st.id,getColor())+`<span>${st.label}</span>`;
+    c.onclick=()=>{selectedBevel=(selectedBevel===st.id?null:st.id);document.querySelectorAll('#bevelGrid .corner-cell').forEach(x=>x.classList.remove('active'));if(selectedBevel)c.classList.add('active');};
+    g.appendChild(c);
+  });
+}
+function updateAllPreviews(){buildDotGrid();buildOuterGrid();buildInnerGrid();buildBevelGrid();}
+
+/* ================= LOGO ================= */
+document.getElementById("logoUpload").addEventListener("change", function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { logoImage = e.target.result; };
+  reader.readAsDataURL(file);
+});
+
+/* ================= QR GENERATION ================= */
+function generateWiFiQR() {
+  const ssid = ssidInput.value.trim();
+  const password = passwordInput.value.trim();
+  const enc = encryptionSelect.value;
+  const color = getColor();
+
+  if (!ssid) { errorMsg.textContent = "ناوی وایفای بنووسە"; return; }
+  if (enc !== "nopass" && !password) { errorMsg.textContent = "وشەی نهێنی داخڵ بکە"; return; }
+  errorMsg.textContent = "";
+
+  const qrText = `WIFI:T:${enc};S:${ssid};` +
+                 (enc !== "nopass" ? `P:${password};` : "") + ";";
+
+  if(selectedBevel){
+    customCanvas=renderBevelQR(qrText,color,260,selectedBevel);
+    qrStyled=null;
+    qrcodeContainer.innerHTML='';
+    qrcodeContainer.appendChild(customCanvas);
+  } else {
+    customCanvas=null;
+    const outerMap={'square':'square','extra-rounded':'extra-rounded','dot':'dot'};
+    const innerMap={'square':'square','rounded':'rounded','dot':'dot'};
+    qrStyled = new QRCodeStyling({
+      width: 260,
+      height: 260,
+      data: qrText,
+      dotsOptions: { color: color, type: selectedDot },
+      cornersSquareOptions: { type: outerMap[selectedOuter]||'square', color: color },
+      cornersDotOptions: { type: innerMap[selectedInner]||'dot', color: color },
+      backgroundOptions: { color: "#ffffff" },
+      image: logoImage||undefined,
+      imageOptions: { margin: 6, imageSize: 0.35, crossOrigin: "anonymous" }
+    });
+    qrcodeContainer.innerHTML = "";
+    qrStyled.append(qrcodeContainer);
+  }
+  downloadBtn.style.display = "inline-block";
+}
+
+function clearAll() {
+  ssidInput.value = "";
+  passwordInput.value = "";
+  encryptionSelect.value = "WPA";
+  qrcodeContainer.innerHTML = `<div class="qr-placeholder">
+    <svg width="72" height="72" viewBox="0 0 80 80" fill="none">
+      <rect x="8" y="8" width="24" height="24" rx="4" stroke="currentColor" stroke-width="3"/>
+      <rect x="14" y="14" width="12" height="12" rx="2" fill="currentColor"/>
+      <rect x="48" y="8" width="24" height="24" rx="4" stroke="currentColor" stroke-width="3"/>
+      <rect x="54" y="14" width="12" height="12" rx="2" fill="currentColor"/>
+      <rect x="8" y="48" width="24" height="24" rx="4" stroke="currentColor" stroke-width="3"/>
+      <rect x="14" y="54" width="12" height="12" rx="2" fill="currentColor"/>
+      <line x1="48" y1="48" x2="72" y2="72" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <line x1="48" y1="72" x2="72" y2="48" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <p>هێشتا QR دروست نەکراوە</p>
+  </div>`;
+  downloadBtn.style.display = "none";
+  document.getElementById("logoUpload").value = "";
+  logoImage = null;
+  qrStyled = null;
+  customCanvas = null;
+  errorMsg.textContent = "";
+}
+
+function downloadQR() {
+  if(customCanvas){
+    const link=document.createElement('a');
+    link.download='wifi_qrcode.png';
+    link.href=customCanvas.toDataURL('image/png');
+    link.click();
+    return;
+  }
+  if (!qrStyled){ errorMsg.textContent="سەرەتا QR دروست بکە"; return; }
+  qrStyled.download({ name: "wifi_qrcode", extension: "png" });
+}
+
+/* ================= SAVED NETWORKS ================= */
+function renderWifiList() {
+  wifiList.innerHTML = "";
+  wifiNetworks.forEach(net => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>📶 ${net.ssid}</span><span class="tag">${net.encryption}</span>`;
+    li.onclick = () => {
+      ssidInput.value = net.ssid;
+      passwordInput.value = net.password;
+      encryptionSelect.value = net.encryption;
+    };
+    wifiList.appendChild(li);
+  });
+}
+
+document.getElementById("generateBtn").onclick = generateWiFiQR;
+document.getElementById("clearBtn").onclick = clearAll;
+downloadBtn.onclick = downloadQR;
+
+renderWifiList();
+updateAllPreviews();
+</script>
+
+</body>
+</html>
